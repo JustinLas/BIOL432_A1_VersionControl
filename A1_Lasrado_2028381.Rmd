@@ -1,93 +1,80 @@
 ---
-title: "BIOL 432 A1"
+title: "BIOL 432 — Assignment 1: Data Generation and Visualization"
 author: "Justin Lasrado"
 date: "2025-09-04"
 output: html_document
 ---
 
+## Overview
 
-```{r}
+This assignment introduces reproducible data generation, basic data manipulation with `dplyr`, and visualization with `ggplot2`. A simulated dataset of limb measurements is generated and summarized by organism and observer.
+
+```{r setup}
 library(dplyr)
 library(ggplot2)
-library(tidyr)
 
-# This script creates measurements of randomly selected species, with random limb width, limb length and observers
+# Generate the reproducible measurement dataset.
 source("dataGenerato.R")
 
-# This script takes the measurements and then solves for the volume of each species limb and adds a column for this measurement in measurement.csv 
-source("volumeEstimato.R")
+# Import the generated measurements.
+measurements <- read.csv("measurements.csv", stringsAsFactors = FALSE)
 
-# Load revised measurements.csv 
+# Calculate limb volume by approximating each limb as a cylinder.
+# Volume = pi * radius^2 * length, where radius = width / 2.
+measurements <- measurements %>%
+  mutate(volume = pi * (Limb_width / 2)^2 * Limb_legnth)
 
-measurements <- read.csv("measurements.csv")
-
-# Inspecting data to ensure its been correctly imported
-head (measurements)
+head(measurements)
 ```
 
-```{r}
-# Sorting the data by species, then observer, and limbb volume
-Measurements_sort <- measurements %>% 
+```{r summarize}
+# Sort observations by organism, observer, and calculated limb volume.
+measurements_sorted <- measurements %>%
   arrange(Organism, Observer, volume)
-head(Measurements_sort)
+
+head(measurements_sorted)
 ```
-```{r}
-# Using the mean volume to create the average volume for each species 
-Avrg_volume <- Measurements_sort %>% 
+
+```{r averages}
+# Calculate mean limb volume for each organism.
+average_volume <- measurements_sorted %>%
   group_by(Organism) %>%
-  summarize(Average_volume = mean(volume))
+  summarize(
+    Average_volume = mean(volume),
+    .groups = "drop"
+  )
 
-Avrg_volume
-```
-```{r}
-# Counting the amount of times each species is seen by each observer 
-Obs_count <- Measurements_sort %>%
-  group_by(Organism, Observer) %>%
-  summarize(Count = n())
-
-Obs_count
-``` 
-
-```{r}
-# creating a boxplot of thhe distribution of Limb Volume by Species, with a legend and minimal theme 
-
-ggplot(Measurements_sort, aes(x = Organism, y= volume, fill = Organism))+
-  geom_boxplot()+
-  theme_minimal()+
-  labs(title = "Limb Volume Distrubution by Species", 
-       x= "Species",
-       y= "Limb Volume")
+average_volume
 ```
 
-```{r}
-# Created a multipanel histogram using facet_wrap to create a panel for each organism 
-ggplot(Measurements_sort, aes(x = volume, fill = Organism))+
-  geom_histogram(binwidth = diff(range(Measurements_sort$volume))/20, colour = "black")+
-  facet_wrap(~Organism, scales = "free")+
-  theme_classic()+
-  labs(title = "Multi-Panel Hhistograms of Limb Volume by Speies",
-       x= "Limb Volume",
-       y= "Frequency")
+```{r observers}
+# Count observations contributed by each observer for each organism.
+observer_count <- measurements_sorted %>%
+  count(Organism, Observer, name = "Count")
+
+observer_count
 ```
 
+```{r boxplot}
+ggplot(measurements_sorted, aes(x = Organism, y = volume, fill = Organism)) +
+  geom_boxplot(show.legend = FALSE) +
+  theme_minimal() +
+  labs(
+    title = "Limb Volume Distribution by Organism",
+    x = "Organism",
+    y = "Limb volume"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r histogram}
+ggplot(measurements_sorted, aes(x = volume)) +
+  geom_histogram(bins = 20, colour = "black") +
+  facet_wrap(~ Organism, scales = "free") +
+  theme_classic() +
+  labs(
+    title = "Distribution of Limb Volume by Organism",
+    x = "Limb volume",
+    y = "Frequency"
+  )
+```
