@@ -1,38 +1,29 @@
-# BIOL 432 — Assignment 1: Data Generation and Visualization
+# BIOL 432 — Assignment 1
 
-This repository contains my work for Assignment 1 of **BIOL 432: Computation and Big Data in Biology** at Queen's University.
+This is my Assignment 1 work for **BIOL 432: Computation and Big Data in Biology** at Queen's University.
 
-## Overview
+## What I did
 
-The assignment introduces reproducible data generation, basic data manipulation in R, and visualization. A simulated dataset of limb measurements is generated for multiple organisms and observers, then summarized and visualized.
+For this assignment I generated a small dataset in R containing limb measurements for several species and different observers. I then used the data to calculate limb volume, sort and summarize the measurements, and make a few basic plots.
 
-## Methods
+The main purpose was to get comfortable with R, working with data frames, writing simple scripts, and using GitHub for version control.
 
-- **Language:** R
-- **Data generation:** `sample()` and `rlnorm()` with a fixed random seed
-- **Data manipulation:** `dplyr`
-- **Visualization:** `ggplot2`
-- **Derived measurement:** limb volume calculated by approximating a limb as a cylinder
+## Main methods
 
-## Repository Contents
+- R
+- `dplyr` for organizing and summarizing the data
+- `ggplot2` for plotting
+- `rlnorm()` and `sample()` for generating the example data
+- R Markdown
 
-| File | Description |
-|---|---|
-| `A1_Lasrado_2028381.Rmd` | Main analysis and visualization workflow |
-| `dataGenerato.R` | Generates the reproducible simulated measurement dataset |
-| `measurements.csv` | Generated measurement data used by the analysis |
+## Files
 
-## Reproducibility
+- `A1_Lasrado_2028381.Rmd` — main analysis
+- `dataGenerato.R` — generates the measurement data
+- `measurements.csv` — generated dataset
 
-Run `dataGenerato.R` first to regenerate the simulated measurements, then knit `A1_Lasrado_2028381.Rmd` to reproduce the summaries and figures.
+## Running the analysis
 
-## Skills Demonstrated
+Run `dataGenerato.R` first to generate `measurements.csv`. The R Markdown file can then be knitted to reproduce the analysis and plots.
 
-- Reproducible data generation
-- Data wrangling with `dplyr`
-- Grouped summaries
-- Data visualization with `ggplot2`
-- R Markdown workflows
-- Basic version control and repository organization
-
-> **Coursework note:** This is an academic course project and represents an early-stage computational biology exercise.
+This was one of my first computational biology assignments, so the project is fairly simple, but it covers the basic workflow I was learning in the course.
