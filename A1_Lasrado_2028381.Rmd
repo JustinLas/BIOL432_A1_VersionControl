@@ -13,14 +13,13 @@ This assignment introduces reproducible data generation, basic data manipulation
 library(dplyr)
 library(ggplot2)
 
-# Generate the reproducible measurement dataset.
+# Generate the data
 source("dataGenerato.R")
 
-# Import the generated measurements.
+# Read in the measurements
 measurements <- read.csv("measurements.csv", stringsAsFactors = FALSE)
 
-# Calculate limb volume by approximating each limb as a cylinder.
-# Volume = pi * radius^2 * length, where radius = width / 2.
+# Calculate limb volume assuming the limb is a cylinder
 measurements <- measurements %>%
   mutate(volume = pi * (Limb_width / 2)^2 * Limb_legnth)
 
@@ -28,7 +27,7 @@ head(measurements)
 ```
 
 ```{r summarize}
-# Sort observations by organism, observer, and calculated limb volume.
+# Sort the data so it is easier to look through
 measurements_sorted <- measurements %>%
   arrange(Organism, Observer, volume)
 
@@ -36,7 +35,7 @@ head(measurements_sorted)
 ```
 
 ```{r averages}
-# Calculate mean limb volume for each organism.
+# Find the average limb volume for each organism
 average_volume <- measurements_sorted %>%
   group_by(Organism) %>%
   summarize(
@@ -48,7 +47,7 @@ average_volume
 ```
 
 ```{r observers}
-# Count observations contributed by each observer for each organism.
+# Count how many observations each observer made for each organism
 observer_count <- measurements_sorted %>%
   count(Organism, Observer, name = "Count")
 
